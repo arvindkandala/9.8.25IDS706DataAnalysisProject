@@ -2,6 +2,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, classification_report
+import matplotlib.pyplot as plt
 
 
 df = pd.read_csv("cleanned.csv")
@@ -52,6 +53,11 @@ y_prediction = rf.predict(x_test)
 
 print("accuracy is " + str(accuracy_score(y_test, y_prediction)))
 
+#make a graph showing the top 5 most important variables in predicting heart disease
+importances = pd.Series(rf.feature_importances_, index=x.columns).head(5)
+importances.sort_values().plot(kind="barh")
+plt.title("Most Important predictors heart disease")
+plt.show()
 
 
 
