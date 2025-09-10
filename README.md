@@ -63,3 +63,5 @@
 - ### trestbps (resting blood pressure)
 - ### oldpeak (ST depression induced by exercise)
 - ### These align with known medical risk factors for heart disease.
+
+![Heart Disease Factors](IDS706HeartRateVisualization.png)
