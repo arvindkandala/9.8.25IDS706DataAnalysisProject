@@ -56,3 +56,10 @@
 - ### Evaluated accuracy, precision, recall, and F1-score on the test set
 
 ## Imported matplotlib and created a feature importance plot to show which the biggest predictors of heart diease
+## The Random Forest achieved an accuracy score of about 0.587. Key predictors of heart disease in this dataset included:
+- ### thalch (maximum heart rate achieved)
+- ### chol (serum cholesterol)
+- ### age
+- ### trestbps (resting blood pressure)
+- ### oldpeak (ST depression induced by exercise)
+- ### These align with known medical risk factors for heart disease.
