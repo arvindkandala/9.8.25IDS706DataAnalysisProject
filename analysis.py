@@ -45,7 +45,7 @@ x_train, x_test, y_train, y_test = train_test_split(
 #I made 50 decision trees and used the same random seed as before so I can reproduce my results
 rf = RandomForestClassifier(n_estimators=50, random_state=24)
 
-#train 80% of the x data on 80% of the y data
+#train 80% of the data
 rf.fit(x_train, y_train)
 
 #get the random forest prediction of the y_test given the x_test data
