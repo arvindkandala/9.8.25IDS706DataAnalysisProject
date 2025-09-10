@@ -4,3 +4,7 @@ pytest
 click
 black
 pytest-cov
+pandas
+scikit-learn
+numpy
+matplotlib
