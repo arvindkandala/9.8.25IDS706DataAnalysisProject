@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 
 df = pd.read_csv("cleanned.csv")
-'''
+
 print(df.head())
 print(df.info())
 print(df.describe())
@@ -29,7 +29,7 @@ sexChol = df.groupby('sex')['chol'].agg(
     )
 print(sexChol)
 
-'''
+
 #attempt at random forest 
 #first I set my dependent/outcome (y) and independent/predictor variables(x)
 x = df.drop("num", axis=1) 
