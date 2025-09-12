@@ -6,6 +6,8 @@
     - Imported csv of heart health data from kaggle (file named cleanned.csv)
 
 ## Project Structure
+
+```bash
 .
 ├── analysis.py
 ├── test_analysis.py
@@ -15,6 +17,7 @@
 └── .github/
     └── workflows/
         └── python.yml
+
 
 
 ## Created a virtual environment with this code:
