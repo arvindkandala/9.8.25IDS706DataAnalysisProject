@@ -13,6 +13,7 @@
 ├── .gitignore
 ├── test_analysis.py
 ├── cleanned.csv
+├── TestsPassed.png
 ├── Dockerfile
 ├── README.md
 ├── Makefile
@@ -29,23 +30,41 @@
  source .venv/bin/activate
 
 ## Put some utilities inside my Makefile: 
- install: pip install --upgrade pip &&
- pip install -r requirements.txt
- format: black *.py
- lint: flake8 hello.py
- test: python -m pytest -vv --cov=hello test_hello.py
- clean: rm -rf pycache .pytest_cache .coverage
- all: install format lint test
+install:
+	pip install --upgrade pip && pip install -r requirements.txt
+
+format:
+	black *.py
+
+lint:
+	flake8 *.py
+
+test:
+	pytest -vv --cov=analysis --cov-report=term-missing
+
+run:
+	python analysis.py
+
+clean:
+	rm -rf __pycache__ .pytest_cache .coverage
+
+all: install format lint test
+
 
 ## Put my dependencies in my requirements.txt file: 
- pylint 
- flake8 
- pytest 
- click 
- black 
- pytest-cov
+pylint
+flake8
+pytest
+click
+black
+pytest-cov
+pandas
+scikit-learn
+numpy
+matplotlib
 
- Ran in  terminal: make install
+
+ Ran in  terminal: make install, make test, make run
 
 ## The goals of this analysis were:
 -  Data exploration and filtering
@@ -78,6 +97,17 @@
 -  age
 -  trestbps (resting blood pressure)
 -  oldpeak (ST depression induced by exercise)
--  These align with known medical risk factors for heart disease.
+-  These align with known medical risk factors for heart disease
+-  the script saves a horizontal bar chart of the top 5 features to IDS706HeartRateVisualization.png
 
 ![Heart Disease Factors](IDS706HeartRateVisualization.png)
+
+##Dockerfile & how I run this project in Docker
+A Dockerfile is included to make the environment reproducible (installs requirements, copies project files).
+Build the image:
+    -   docker build -t ids706-proj .
+Run the analysis (uses the image’s default command which runs python analysis.py):
+    -   docker run --rm -it ids706-proj
+Run Makefile targets (inside Docker, using the files baked into the image):
+    -   docker run --rm -it ids706-proj make test
+    -   docker run --rm -it ids706-proj make run
