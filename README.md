@@ -10,9 +10,13 @@
 ```bash
 .
 ├── analysis.py
+├── .gitignore
 ├── test_analysis.py
-├── cleanned.py
+├── cleanned.csv
+├── Dockerfile
+├── README.md
 ├── Makefile
+├── IDS706HeartRateVisualization.png
 ├── requirements.txt
 └── .github/
     └── workflows/
