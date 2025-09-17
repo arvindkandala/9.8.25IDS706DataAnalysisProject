@@ -1,10 +1,11 @@
+#version saved in desktop
+
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 import matplotlib.pyplot as plt
 from pathlib import Path
-
 
 REQUIRED_FOR_FILTER = {"age", "sex"}
 REQUIRED_FOR_GROUP = {"sex", "chol"}
