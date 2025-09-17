@@ -37,3 +37,37 @@ def test_group_sex_chol_returns_expected_aggregations():
     assert set(g.index) == {"Male", "Female"}
     # sanity: q1 <= q3
     assert (g["q1"] <= g["q3"]).all()
+
+
+def test_preprocess_creates_dummies_and_separates_target():
+    df = tiny_df()
+    X, y = a.preprocess(df, target_col="num")
+    assert "num" not in X.columns
+    assert any(c.startswith("sex_") for c in X.columns)
+    assert len(y) == len(df)
+
+
+def test_preprocess_missing_target_raises():
+    df = tiny_df().drop(columns=["num"])
+    try:
+        a.preprocess(df, target_col="num")
+        assert False, "Expected ValueError for missing target"
+    except ValueError as e:
+        assert "Missing required column" in str(e)
+
+
+def test_train_rf_returns_model_and_reasonable_accuracy():
+    df = tiny_df()
+    X, y = a.preprocess(df, target_col="num")
+    model, acc = a.train_rf(X, y, n_estimators=10, random_state=0)
+    assert hasattr(model, "predict")
+    assert 0.0 <= acc <= 1.0
+
+
+def test_plot_top_features_writes_file(tmp_path):
+    df = tiny_df()
+    X, y = a.preprocess(df, target_col="num")
+    model, _ = a.train_rf(X, y, n_estimators=10, random_state=0)
+    out = tmp_path / "feat.png"
+    saved = a.plot_top_features(model, X, top_k=3, outpath=str(out))
+    assert os.path.exists(saved) and os.path.getsize(saved) > 0
