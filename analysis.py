@@ -1,63 +1,107 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score, classification_report
+from sklearn.metrics import accuracy_score
 import matplotlib.pyplot as plt
+from pathlib import Path
 
 
-df = pd.read_csv("cleanned.csv")
-
-print(df.head())
-print(df.info())
-print(df.describe())
-
-#want to see data specifically for men 60 years or older
-oldmen = df[(df['age']>=60) & (df['sex']=='Male')]
-print(oldmen)
-print(oldmen.shape)
+REQUIRED_FOR_FILTER = {"age", "sex"}
+REQUIRED_FOR_GROUP = {"sex", "chol"}
+REQUIRED_FOR_PREP = {"num"}
 
 
-#testing out grouping
-sexChol = df.groupby('sex')['chol'].agg(
-    q1 = lambda x: x.quantile(.25),
-    q3 = lambda x: x.quantile(.75),
-    mean = 'mean',
-    med ='median',
-    min = 'min',
-    max = 'max', 
-    cnt = 'count'
+def _require_columns(df: pd.DataFrame, required: set):
+    missing = [c for c in required if c not in df.columns]
+    if missing:
+        raise ValueError(f"Missing required column(s): {missing}")
+
+
+def load_data(path: str) -> pd.DataFrame:
+    df = pd.read_csv(path)
+    return df
+
+
+def filter_old_men(df: pd.DataFrame) -> pd.DataFrame:
+    """return rows for men with age>=60"""
+    _require_columns(df, REQUIRED_FOR_FILTER)
+    return df[(df["age"] >= 60) & (df["sex"] == "Male")]
+
+
+def group_sex_chol(df: pd.DataFrame) -> pd.DataFrame:
+    """group by sex and get stats for cholesterol"""
+    _require_columns(df, REQUIRED_FOR_GROUP)
+    return df.groupby("sex")["chol"].agg(
+        q1=lambda x: x.quantile(0.25),
+        q3=lambda x: x.quantile(0.75),
+        mean="mean",
+        med="median",
+        min="min",
+        max="max",
+        cnt="count",
     )
-print(sexChol)
 
 
-#attempt at random forest 
-#first I set my dependent/outcome (y) and independent/predictor variables(x)
-x = df.drop("num", axis=1) 
-y = df["num"]
+def preprocess(df: pd.DataFrame, target_col: str = "num"):
+    """split features/target and one-hot encode categoricals"""
+    _require_columns(df, {target_col})
+    X = df.drop(target_col, axis=1)
+    y = df[target_col]
+    X = pd.get_dummies(X, drop_first=True)
+    return X, y
 
-x = pd.get_dummies(x, drop_first=True) #update x to set dummy variables for discrete variables
+
+def train_rf(X, y, n_estimators: int = 50, random_state: int = 24):
+    """train random forest and return model and accuracy"""
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.2, random_state=random_state
+    )
+    rf = RandomForestClassifier(n_estimators=n_estimators, random_state=random_state)
+    rf.fit(X_train, y_train)
+    y_pred = rf.predict(X_test)
+    acc = accuracy_score(y_test, y_pred)
+    return rf, acc
 
 
-x_train, x_test, y_train, y_test = train_test_split(
-    x, y, test_size=0.2, random_state=24
-)
+def plot_top_features(model: RandomForestClassifier, X, top_k: int = 5, outpath: str = "IDS706HeartRateVisualization.png") -> str:
+    """save horizontal bar chart of most important heart disease factors"""
+    importances = pd.Series(model.feature_importances_, index=X.columns)
+    top = importances.nlargest(top_k).sort_values()
+    top.plot(kind="barh")
+    plt.title("most important predictors for heart disease")
+    plt.tight_layout()
+    outpath = str(outpath)
+    Path(outpath).parent.mkdir(parents=True, exist_ok=True)
+    plt.savefig(outpath, dpi=300, bbox_inches="tight")
+    plt.close()
+    return outpath
 
-#I made 50 decision trees and used the same random seed as before so I can reproduce my results
-rf = RandomForestClassifier(n_estimators=50, random_state=24)
 
-#train 80% of the data
-rf.fit(x_train, y_train)
+def main():
+    df = load_data("cleanned.csv")
 
-#get the random forest prediction of the y_test given the x_test data
-y_prediction = rf.predict(x_test)
+    # quick EDA on console
+    print(df.head())
+    print(df.info())
+    print(df.describe())
 
-print("accuracy is " + str(accuracy_score(y_test, y_prediction)))
+    oldmen = filter_old_men(df)
+    print(oldmen)
+    print(oldmen.shape)
 
-#make a graph showing the top 5 most important variables in predicting heart disease
-importances = pd.Series(rf.feature_importances_, index=x.columns).head(5)
-importances.sort_values().plot(kind="barh")
-plt.title("Most Important predictors heart disease")
-plt.show()
+    sexChol = group_sex_chol(df)
+    print(sexChol)
+
+    X, y = preprocess(df, target_col="num")
+    model, acc = train_rf(X, y, n_estimators=50, random_state=24)
+    print(f"accuracy is {acc:.3f}")
+
+    out = plot_top_features(model, X, top_k=5, outpath="IDS706HeartRateVisualization.png")
+    print(f"Saved plot to {out}")
+
+
+if __name__ == "__main__":
+    main()
 
 
 
