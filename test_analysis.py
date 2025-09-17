@@ -27,3 +27,13 @@ def test_filter_old_men_missing_columns_raises():
         assert False, "Expected ValueError for missing column"
     except ValueError as e:
         assert "Missing required column" in str(e)
+
+
+def test_group_sex_chol_returns_expected_aggregations():
+    df = tiny_df()
+    g = a.group_sex_chol(df)
+    for col in ["q1", "q3", "mean", "med", "min", "max", "cnt"]:
+        assert col in g.columns
+    assert set(g.index) == {"Male", "Female"}
+    # sanity: q1 <= q3
+    assert (g["q1"] <= g["q3"]).all()
