@@ -12,6 +12,7 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Check out
         uses: actions/checkout@v4
@@ -20,7 +21,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-          cache: "pip"
+          cache: "pip"           # speeds up installs using your requirements.txt
           cache-dependency-path: "requirements.txt"
 
       - name: Install deps
@@ -32,5 +33,14 @@ jobs:
       - name: Format check (Black)
         run: black --check .
 
-      - name: Run tests
+      - name: Run tests (pytest + coverage)
         run: make test
+
+      - name: Upload coverage artifact (optional)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-files
+          path: |
+            .coverage
+            .pytest_cache

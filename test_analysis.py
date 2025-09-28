@@ -4,12 +4,15 @@ import analysis as a
 
 
 def tiny_df():
-    return pd.DataFrame({
-        "age": [59, 60, 72, 45, 80],
-        "sex": ["Male", "Male", "Female", "Female", "Male"],
-        "chol": [200, 180, 220, 210, 199],
-        "num": [0, 1, 1, 0, 1],  # binary target
-    })
+    return pd.DataFrame(
+        {
+            "age": [59, 60, 72, 45, 80],
+            "sex": ["Male", "Male", "Female", "Female", "Male"],
+            "chol": [200, 180, 220, 210, 199],
+            "num": [0, 1, 1, 0, 1],  # binary target
+        }
+    )
+
 
 def test_filter_old_men_selects_age_60_plus_and_male():
     df = tiny_df()

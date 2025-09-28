@@ -6,10 +6,10 @@ format:
 	black *.py
 	
 lint:
-	flake8 *.py
+	flake8 analysis.py
 
 test:
-	python -m pytest -vv --cov=analysis *.py
+	python -m pytest -vv --cov=analysis test_analysis.py
 
 clean:
 	rm -rf __pycache__ .pytest_cache .coverage
