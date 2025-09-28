@@ -23,7 +23,7 @@
     └── workflows/
         └── python.yml
 
-
+```
 
 ## Created a virtual environment with this code:
  cd ~/Downloads/9.8.25IDS706DataAnalysisProject python3 -m venv .venv
