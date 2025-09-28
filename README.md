@@ -1,4 +1,7 @@
 # 9.8.25IDS706DataAnalysisProject
+
+[![CI](https://github.com/arvindkandala/9.8.25IDS706DataAnalysisProject/actions/workflows/python.yml/badge.svg)](https://github.com/arvindkandala/9.8.25IDS706DataAnalysisProject/actions/workflows/python.yml)
+
 - ## I followed the steps from the first assignment to make a README, Makefile, add in requirements, and make files for coding/analysis
     - Created a new repository with a README and git ignore file
     - Created python scripts for my analysis and to test my code
