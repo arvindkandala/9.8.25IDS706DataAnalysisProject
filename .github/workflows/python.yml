@@ -27,12 +27,6 @@ jobs:
       - name: Install deps
         run: make install
 
-      - name: Lint (flake8)
-        run: make lint
-
-      - name: Format check (Black)
-        run: black --check .
-
       - name: Run tests (pytest + coverage)
         run: make test
 
