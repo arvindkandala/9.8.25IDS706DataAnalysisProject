@@ -5,9 +5,6 @@ install:
 format:
 	black *.py
 	
-lint:
-	flake8 analysis.py
-
 test:
 	python -m pytest -vv --cov=analysis test_analysis.py
 

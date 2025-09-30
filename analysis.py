@@ -55,9 +55,7 @@ def train_rf(X, y, n_estimators: int = 50, random_state: int = 24):
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.2, random_state=random_state
     )
-    rf = RandomForestClassifier(
-        n_estimators=n_estimators,
-        random_state=random_state)
+    rf = RandomForestClassifier(n_estimators=n_estimators, random_state=random_state)
     rf.fit(X_train, y_train)
     y_pred = rf.predict(X_test)
     acc = accuracy_score(y_test, y_pred)
@@ -82,15 +80,16 @@ def plot_top_features(
     plt.close()
     return outpath
 
+
 def printMyDF(df):
     print(df.head())
     print(df.info())
     print(df.describe())
 
+
 def main():
     df = load_data("cleanned.csv")
 
-    # quick EDA on console
     printMyDF(df)
 
     oldmen = filter_old_men(df)
@@ -108,7 +107,6 @@ def main():
         model, X, top_k=5, outpath="IDS706HeartRateVisualization.png"
     )
     print(f"Saved plot to {out}")
-
 
 
 if __name__ == "__main__":
