@@ -70,6 +70,29 @@ def test_plot_top_features_writes_file(tmp_path):
     df = tiny_df()
     X, y = a.preprocess(df, target_col="num")
     model, _ = a.train_rf(X, y, n_estimators=10, random_state=0)
-    out = tmp_path / "feat.png"
+    out = tmp_path / "features.png"
     saved = a.plot_top_features(model, X, top_k=3, outpath=str(out))
     assert os.path.exists(saved) and os.path.getsize(saved) > 0
+
+
+def test_risk_ratio_requires_columns():
+    df = pd.DataFrame({"chol": [180, 220, 260]})
+    try:
+        a.risk_ratio_high_vs_low_chol(df)
+        assert False, "Expected ValueError when 'num' is missing"
+    except ValueError:
+        pass
+
+
+def test_risk_ratio_high_greater_than_low_when_constructed():
+    # Low-chol group mostly 0s; high-chol group mostly 1s
+    df = pd.DataFrame(
+        {
+            "chol": [150, 155, 160, 165, 170, 300, 305, 310, 315, 320],
+            "num": [0, 0, 0, 0, 0, 1, 1, 1, 1, 1],
+        }
+    )
+    rr = a.risk_ratio_high_vs_low_chol(df, high_q=0.75, low_q=0.25)
+    assert rr["high_rate"] > rr["low_rate"]
+    assert rr["risk_ratio"] > 1.0
+    assert rr["high_n"] >= 1 and rr["low_n"] >= 1

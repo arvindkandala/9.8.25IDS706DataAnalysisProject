@@ -114,3 +114,10 @@ Run the analysis (uses the image’s default command which runs python analysis.
 Run Makefile targets (inside Docker, using the files baked into the image):
     -   docker run --rm -it ids706-proj make test
     -   docker run --rm -it ids706-proj make run
+
+
+## Added risk_ratio_high_vs_low_chol function
+Compares the prevalence of heart disease in
+    people who have a cholesterol level above the 75% quartile
+    people who have a cholesterol level below the 25% quartile
+Create a "risk ratio" that compares the prevalence of the high-cholesterol group to the low-cholesterol group

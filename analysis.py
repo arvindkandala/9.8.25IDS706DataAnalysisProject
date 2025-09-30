@@ -62,6 +62,44 @@ def train_rf(X, y, n_estimators: int = 50, random_state: int = 24):
     return rf, acc
 
 
+def risk_ratio_high_vs_low_chol(
+    df: pd.DataFrame, high_q: float = 0.75, low_q: float = 0.25
+) -> dict:
+    """
+    Compare heart-disease for people with high cholesterol vs low cholesterol
+    """
+    _require_columns(df, {"chol", "num"})
+    data = df[["chol", "num"]].copy()
+    data["chol"] = pd.to_numeric(data["chol"], errors="coerce")
+    data["num"] = (pd.to_numeric(data["num"], errors="coerce") > 0).astype(int)
+    data = data.dropna(subset=["chol", "num"])
+    if data.empty:
+        raise ValueError("required columns are missing")
+
+    high_thr = data["chol"].quantile(high_q)
+    low_thr = data["chol"].quantile(low_q)
+
+    high = data[data["chol"] >= high_thr]
+    low = data[data["chol"] <= low_thr]
+
+    if len(high) == 0 or len(low) == 0:
+        raise ValueError("no data above high quantile or below low quantile")
+
+    high_rate = high["num"].mean()
+    low_rate = low["num"].mean()
+    risk_ratio = float("inf") if low_rate == 0 else high_rate / low_rate
+
+    return {
+        "high_threshold": float(high_thr),
+        "low_threshold": float(low_thr),
+        "high_rate": float(high_rate),
+        "low_rate": float(low_rate),
+        "risk_ratio": float(risk_ratio),
+        "high_n": int(len(high)),
+        "low_n": int(len(low)),
+    }
+
+
 def plot_top_features(
     model: RandomForestClassifier,
     X,
@@ -106,6 +144,16 @@ def main():
     out = plot_top_features(
         model, X, top_k=5, outpath="IDS706HeartRateVisualization.png"
     )
+
+    rr = risk_ratio_high_vs_low_chol(df, high_q=0.75, low_q=0.25)
+    print(
+        f"Top-quartile chol: {rr['high_rate'] * 100:.1f} % vs "
+        f"bottom-quartile: {rr['low_rate'] * 100:.1f} % "
+        f"(risk ratio {rr['risk_ratio']:.2f}; "
+        f"thresholds ≤{rr['low_threshold']:.0f} / ≥{rr['high_threshold']:.0f}; "
+        f"n={rr['low_n']}/{rr['high_n']})"
+    )
+
     print(f"Saved plot to {out}")
 
 
