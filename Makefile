@@ -4,9 +4,12 @@ install:
 
 format:
 	black *.py
-	
+
 test:
 	python -m pytest -vv --cov=analysis test_analysis.py
+
+lint:
+	python -m flake8 --ignore=E501,E203,W503 analysis.py test_analysis.py
 
 clean:
 	rm -rf __pycache__ .pytest_cache .coverage

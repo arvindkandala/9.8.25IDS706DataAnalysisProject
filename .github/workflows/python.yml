@@ -27,8 +27,11 @@ jobs:
       - name: Install deps
         run: make install
 
-      - name: Foramt
+      - name: Format
         run: make format
+
+      - name: Lint
+        run: make lint
 
       - name: Run tests (pytest + coverage)
         run: make test
