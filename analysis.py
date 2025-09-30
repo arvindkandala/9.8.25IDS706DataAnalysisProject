@@ -27,7 +27,7 @@ def filter_old_men(df: pd.DataFrame) -> pd.DataFrame:
     return df[(df["age"] >= 60) & (df["sex"] == "Male")]
 
 
-def group_sex_chol(df: pd.DataFrame) -> pd.DataFrame:
+def groupSexChol(df: pd.DataFrame) -> pd.DataFrame:
     """group by sex and get stats for cholesterol"""
     _require_columns(df, REQUIRED_FOR_GROUP)
     return df.groupby("sex")["chol"].agg(
@@ -82,20 +82,22 @@ def plot_top_features(
     plt.close()
     return outpath
 
+def printMyDF(df):
+    print(df.head())
+    print(df.info())
+    print(df.describe())
 
 def main():
     df = load_data("cleanned.csv")
 
     # quick EDA on console
-    print(df.head())
-    print(df.info())
-    print(df.describe())
+    printMyDF(df)
 
     oldmen = filter_old_men(df)
     print(oldmen)
     print(oldmen.shape)
 
-    sexChol = group_sex_chol(df)
+    sexChol = groupSexChol(df)
     print(sexChol)
 
     X, y = preprocess(df, target_col="num")
@@ -106,6 +108,7 @@ def main():
         model, X, top_k=5, outpath="IDS706HeartRateVisualization.png"
     )
     print(f"Saved plot to {out}")
+
 
 
 if __name__ == "__main__":

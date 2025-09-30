@@ -33,7 +33,7 @@ def test_filter_old_men_missing_columns_raises():
 
 def test_group_sex_chol_returns_expected_aggregations():
     df = tiny_df()
-    g = a.group_sex_chol(df)
+    g = a.groupSexChol(df)
     for col in ["q1", "q3", "mean", "med", "min", "max", "cnt"]:
         assert col in g.columns
     assert set(g.index) == {"Male", "Female"}
